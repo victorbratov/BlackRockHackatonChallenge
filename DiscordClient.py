@@ -1,4 +1,6 @@
 import discord
+import messageProcessing
+
 
 class DiscordClient(discord.Client):
 
@@ -8,10 +10,11 @@ class DiscordClient(discord.Client):
     async def on_ready(self):
         print(f"Bot {self.user} is ready")
 
-    async def on_message(self, message):
+    async def on_message(self, message: discord.Message):
 
         if message.author == self.user:
             return
 
         if message.channel.type == discord.ChannelType.private:
-            await message.channel.send('Hello!')
+            if messageProcessing.message_is_command(message.content):
+                await message.author.send(messageProcessing.process_command(message.content))
