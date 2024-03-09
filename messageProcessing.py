@@ -1,15 +1,29 @@
 from types import FunctionType
+import utils
 
 
-def help_command() -> str:
-    return 'This is the help message'
+def help_command(message: str) -> str:
+    args = message.split(" ")
+    if len(args) < 2:
+        initial = """
+        Welcome to the help pages, each of which provides information on a particular aspect of personal finance.
+        To specify a help page, type "/help <page>" (replacing <page> with the page you want) and I will display it for you.
+        The pages available are:
+        """
+    else:
+        help_page_maybe = utils.get_help_page(args[1])
+        if help_page_maybe is None:
+            return f"The help page \"{args[1]}\" does not exist"
+        else:
+            print("Error: Bad logic")
+            return help_page_maybe
 
 
-def about() -> str:
+def about(message: str) -> str:
     return 'This is the about message'
 
 
-def ping() -> str:
+def ping(message: str) -> str:
     return 'Pong!'
 
 
@@ -28,4 +42,4 @@ def process_command(message: str) -> str:
     if ans is str:
         return ans
     elif ans is FunctionType:
-        return ans()
+        return ans(message)
