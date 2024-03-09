@@ -18,3 +18,5 @@ class DiscordClient(discord.Client):
         if message.channel.type == discord.ChannelType.private:
             if messageProcessing.message_is_command(message.content):
                 await message.author.send(messageProcessing.process_command(message.content))
+            else:
+                await message.author.send("these are the avaliable commands:\n" + messageProcessing.process_command('/show_commands'))
