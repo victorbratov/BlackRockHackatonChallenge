@@ -27,6 +27,7 @@ def help_command(message: str) -> str:
         To specify a help page, type "/help <page>" (replacing <page> with the page you want) and I will display it for you.
         The pages available are:
         """
+        return initial
     else:
         help_page_maybe = utils.get_help_page(args[1])
         if help_page_maybe is None:
