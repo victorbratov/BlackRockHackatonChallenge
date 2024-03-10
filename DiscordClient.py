@@ -1,5 +1,6 @@
 import discord
 import messageProcessing
+import os
 
 
 class DiscordClient(discord.Client):
@@ -18,4 +19,10 @@ class DiscordClient(discord.Client):
 
         if message.channel.type == discord.ChannelType.private:
             ans = self.mp.process_message(message.author.id, message.author.name, message.content)
-            await message.author.send(ans)
+            if isinstance(ans, str):
+                await message.author.send(ans)
+            elif isinstance(ans, tuple):
+                msg = ans[0]
+                print(ans)
+                await message.author.send(msg, file=discord.File(ans[1], 'chart.jpeg'))
+                os.remove(ans[1])
