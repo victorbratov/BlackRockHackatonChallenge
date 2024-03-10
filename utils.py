@@ -5,9 +5,9 @@ from typing import Optional
 def get_help_page(page_name: str) -> Optional[str]:
     try:
         content = ""
-        if os.path.exists(f"help/{page_name}.txt"):
-            with open(f"help/{page_name}.txt", "r") as file:
-                content += file.read().replace('\n', '')
+        if os.path.exists(f"info/{page_name}.txt"):
+            with open(f"info/{page_name}.txt", "r") as file:
+                content += file.read()
             return content
         else:
             return None

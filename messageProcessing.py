@@ -1,5 +1,6 @@
 from inspect import ismethod
 import inspect
+from os import listdir, path
 
 import BudgetController
 import utils
@@ -13,7 +14,7 @@ class MessageProcessor:
     def __init__(self, bc: BudgetController.BudgetController):
         self.bc = bc
         self.commands = {
-            '/help': self.help_command,
+            '/info': self.info_command,
             '/about': self.about,
             '/ping': self.ping,
             '/add_expense': self.add_expense,
@@ -30,21 +31,21 @@ class MessageProcessor:
         You can read articles that will answer your questions about personal finance.
         """
 
-    def help_command(self, message: str) -> str:
-        args = message.split(" ")
+    def info_command(self, message: str) -> str:
+        args = message.split()
         if len(args) < 2:
-            initial = """
-            Welcome to the help pages, each of which provides information on a particular aspect of personal finance.
-            To specify a help page, type "/help <page>" (replacing <page> with the page you want) and I will display it for you.
-            The pages available are:
-            """
-            return initial
+            response = """Welcome to the info info, each of which provides information on a particular aspect of personal finance.
+To specify an info page, type "/info <page>" (replacing <page> with the page you want) and I will display it for you.
+The info available are:"""
+            pages = [f for f in listdir("info") if path.isfile(path.join("info", f))]
+            for page in pages:
+                response += "\n - " + page[:-4]
+            return response
         else:
             help_page_maybe = utils.get_help_page(args[1])
             if help_page_maybe is None:
-                return f"The help page \"{args[1]}\" does not exist"
+                return f"The info page \"{args[1]}\" does not exist"
             else:
-                print("Error: Bad logic")
                 return help_page_maybe
 
     def ping(self) -> str:
