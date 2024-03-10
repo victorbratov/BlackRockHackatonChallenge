@@ -1,4 +1,5 @@
 import os.path
+import time
 from typing import Optional
 
 
@@ -14,3 +15,7 @@ def get_page(page_name: str, directory: str) -> Optional[str]:
     except OSError as e:
         print(f"Error: Failed to open/read file {directory}/{page_name}.txt: {e}")
         return None
+
+
+def get_current_month() -> int:
+    return int(time.strftime("%m"))
