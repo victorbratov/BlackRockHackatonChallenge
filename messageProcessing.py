@@ -83,6 +83,8 @@ Additional help pages:"""
                     return "Usage: /stop_budgeting\n\nStops the budget tracker"
                 case "set_monthly_budget":
                     return "Usage: /set_monthly_budget <amount>\n\nSets the monthly budget - The amount of money available each month\n\n\t<amount> - The amount of money available (positive integer)"
+                case "show_this_month_expenses":
+                    return "Usage: /show_this_month_expenses\n\nDisplays a pie chart showing all the expenses for this month, broken up into categories, compared to the budget"
             help_page_maybe = utils.get_page(args[1], "help")
             if help_page_maybe is None:
                 return f"The info page \"{args[1]}\" does not exist"
@@ -195,5 +197,7 @@ Additional help pages:"""
 #                 print(MessageProcessor.info_command(mp, u_input))
 #             case "/help":
 #                 print(MessageProcessor.help_command(mp, u_input))
+#             case "/show_commands":
+#                 print(MessageProcessor.show_commands(mp))
 #     except EOFError:
 #         break
