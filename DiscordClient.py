@@ -4,7 +4,8 @@ import messageProcessing
 
 class DiscordClient(discord.Client):
 
-    def __init__(self):
+    def __init__(self, mp: messageProcessing.MessageProcessor):
+        self.mp = mp
         super().__init__(intents=discord.Intents.default())
 
     async def on_ready(self):
@@ -16,7 +17,5 @@ class DiscordClient(discord.Client):
             return
 
         if message.channel.type == discord.ChannelType.private:
-            if messageProcessing.message_is_command(message.content):
-                await message.author.send(messageProcessing.process_command(message.content))
-            else:
-                await message.author.send("these are the avaliable commands:\n" + messageProcessing.process_command('/show_commands'))
+            ans = self.mp.process_message(message.author.id, message.author.name, message.content)
+            await message.author.send(ans)

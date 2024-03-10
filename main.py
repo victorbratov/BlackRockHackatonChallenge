@@ -2,17 +2,31 @@
 import os
 
 from dotenv import load_dotenv
+
+import BudgetController
+import Database
 import DiscordBot
-import DiscordClient
+import messageProcessing
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 DB_PATH = os.getenv('DB_PATH')
 print(TOKEN)
 
-client = DiscordClient.DiscordClient()
-bot = DiscordBot.DiscordBot(TOKEN)
+db = Database.Database(DB_PATH)
+bc = BudgetController.BudgetController(db)
+mp = messageProcessing.MessageProcessor(bc)
+bot = DiscordBot.DiscordBot(TOKEN, mp)
+
+
+
+def db_init():
+    db.create_table_if_not_exists("users", "id INTEGER PRIMARY KEY, name TEXT, uses_budgeting BOOLEAN")
+    db.create_table_if_not_exists("budgeting", "user_id INTEGER, monthly_budget INTEGER, remaining_budget INTEGER, FOREIGN KEY (user_id) REFERENCES users(id)")
+    db.create_table_if_not_exists("expenses", "user_id INTEGER, amount INTEGER, category_id INTEGER, date TEXT ,FOREIGN KEY (user_id) REFERENCES users(id)")
+
 
 
 if __name__ == "__main__":
+    db_init()
     bot.run()

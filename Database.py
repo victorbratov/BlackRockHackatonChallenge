@@ -25,3 +25,6 @@ class Database:
     def delete(self, table_name: str, where: str):
         self.cur.execute(f"DELETE FROM {table_name} WHERE {where}")
         self.con.commit()
+
+    def user_exists(self, user_id: int) -> bool:
+        return bool(self.select("users", "id", f"WHERE id = {user_id}"))

@@ -1,10 +1,10 @@
 import DiscordClient
-import discord
+import messageProcessing
 
 class DiscordBot():
 
-    def __init__(self, token: str):
-        self.client = DiscordClient.DiscordClient()
+    def __init__(self, token: str, mp: messageProcessing.MessageProcessor):
+        self.client = DiscordClient.DiscordClient(mp)
         self.token = token
 
     def run(self):
