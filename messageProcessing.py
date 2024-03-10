@@ -136,12 +136,17 @@ class MessageProcessor:
             return 'Invalid command'
 
     def process_message(self, user_id: int, user_name: str, message: str) -> Union[str, tuple[str]]:
-        if message_is_command(message):
-            return self.process_command(user_id, message)
-
         if not self.bc.db.user_exists(user_id):
             self.bc.db.insert("users", "id, name, uses_budgeting", f"{user_id}, '{user_name}', 0")
             return "Welcome to the bot! You have been registered. If you want to use the budgeting feature, type /use_budgeting"
+
+        month = self.bc.db.select("budgeting", "month", f"WHERE user_id = {user_id}")[0][0]
+        print(month, utils.get_current_month())
+        if month != utils.get_current_month():
+            self.bc.db.update("budgeting", "remaining_budget = monthly_budget, month = strftime('%m', 'now')", f"user_id = {user_id}")
+
+        if message_is_command(message):
+            return self.process_command(user_id, message)
 
         else:
             return "I'm sorry, I don't understand that command. Type /show_commands to see the available commands."
