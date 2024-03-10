@@ -1,0 +1,10 @@
+Some common finance terms you may come across:
+
+- **Budget** - A budget is an estimate of revenue and expenses over a specified time period, informed by keeping track of revenue and expenses. I can help you with this, type /help budgeting
+- **Revenue** - The sum of money in from all income sources over a specified time period
+- **Expenses** - This is the sum of the money out over a specified time period. It's useful to break down your expenses into categories to see where your money is going
+- **Income** - Revenue - Expenses, over a specified time period
+
+More definitions at: https://www.investopedia.com/financial-term-dictionary-4769738
+
+(Source: https://www.investopedia.com)

@@ -2,15 +2,15 @@ import os.path
 from typing import Optional
 
 
-def get_help_page(page_name: str) -> Optional[str]:
+def get_page(page_name: str, directory: str) -> Optional[str]:
     try:
         content = ""
-        if os.path.exists(f"info/{page_name}.txt"):
-            with open(f"info/{page_name}.txt", "r") as file:
+        if os.path.exists(f"{directory}/{page_name}.txt"):
+            with open(f"{directory}/{page_name}.txt", "r") as file:
                 content += file.read()
             return content
         else:
             return None
     except OSError as e:
-        print(f"Error: Failed to open/read file help/{page_name}.txt: {e}")
+        print(f"Error: Failed to open/read file {directory}/{page_name}.txt: {e}")
         return None

@@ -1,0 +1,11 @@
+I can help you manage your budget, with my in-built budget calculator!
+
+To enable budgeting, first type `/use_budgeting`.
+
+Then, set a monthly budget (amount of money available) with `/set_monthly_budget <amount>`.
+
+You can then add expenses with `/add_expense <amount> <category>`, which will be added to the current month, and expenses of the same category will be grouped.
+
+For an overview of the expenses in the current month, type TODO
+
+Type `/help <command>` for help with the commands!

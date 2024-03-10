@@ -15,6 +15,7 @@ class MessageProcessor:
         self.bc = bc
         self.commands = {
             '/info': self.info_command,
+            '/help': self.help_command,
             '/about': self.about,
             '/ping': self.ping,
             '/add_expense': self.add_expense,
@@ -34,15 +35,51 @@ class MessageProcessor:
     def info_command(self, message: str) -> str:
         args = message.split()
         if len(args) < 2:
-            response = """Welcome to the info info, each of which provides information on a particular aspect of personal finance.
+            response = """Welcome to the info pages, each of which provides information on a particular aspect of personal finance.
 To specify an info page, type "/info <page>" (replacing <page> with the page you want) and I will display it for you.
-The info available are:"""
+The info pages available are:"""
             pages = [f for f in listdir("info") if path.isfile(path.join("info", f))]
             for page in pages:
                 response += "\n - " + page[:-4]
             return response
         else:
-            help_page_maybe = utils.get_help_page(args[1])
+            info_page_maybe = utils.get_page(args[1], "info")
+            if info_page_maybe is None:
+                return f"The info page \"{args[1]}\" does not exist"
+            else:
+                return info_page_maybe
+
+    def help_command(self, message: str) -> str:
+        args = message.split()
+        if len(args) < 2:
+            response = """Welcome to help, where I can help you with my functionality. To see available commands, type `/show_commands`.
+Type `/help [page]` (replacing [page] with the command you want help with, without the slash) to get help on the command, or display a specific help page.
+Additional help pages:"""
+            pages = [f for f in listdir("help") if path.isfile(path.join("help", f))]
+            for page in pages:
+                response += "\n - " + page[:-4]
+            return response
+        else:
+            match args[1]:
+                case "help":
+                    return "Usage: /help [page]\n\nGives help on how to use one of my commands or features.\n\n\t[page] - The help page, or command, to get help on"
+                case "show_commands":
+                    return "Usage: /show_commands\n\nLists my available commands"
+                case "info":
+                    return "Usage: /info [page]\n\nDisplays a help page, for financial information\n\n[page] - The page to display. Run `/info` with no arguments to list the available pages"
+                case "ping":
+                    return "Usage: /ping\n\nReturns a simple message, to check the bot is online and working"
+                case "about":
+                    return "Usage: /about\n\nAbout me!"
+                case "add_expense":
+                    return "Usage: /add_expense <amount> <category>\n\nAdds an expense to the budget tracker, of the specified amount and category\n\n\t<amount> - The amount of money out (positive integer)\n\t<category> - The category of this expense (one of FOOD, TRANSPORTATION, UTILITIES, RENT, CLOTHING, MEDICAL, ENTERTAINMENT, MISCELLANEOUS, TAX)"
+                case "use_budgeting":
+                    return "Usage: /use_budgeting\n\nStarts the budget tracker"
+                case "stop_budgeting":
+                    return "Usage: /stop_budgeting\n\nStops the budget tracker"
+                case "set_monthly_budget":
+                    return "Usage: /set_monthly_budget <amount>\n\nSets the monthly budget - The amount of money available each month\n\n\t<amount> - The amount of money available (positive integer)"
+            help_page_maybe = utils.get_page(args[1], "help")
             if help_page_maybe is None:
                 return f"The info page \"{args[1]}\" does not exist"
             else:
@@ -120,3 +157,17 @@ The info available are:"""
 
         else:
             return "I'm sorry, I don't understand that command. Type /show_commands to see the available commands."
+
+
+# SECTION FOR TESTING
+# mp = MessageProcessor(None)
+# while True:
+#     try:
+#         u_input = input(">>> ")
+#         match u_input.split()[0]:
+#             case "/info":
+#                 print(MessageProcessor.info_command(mp, u_input))
+#             case "/help":
+#                 print(MessageProcessor.help_command(mp, u_input))
+#     except EOFError:
+#         break
