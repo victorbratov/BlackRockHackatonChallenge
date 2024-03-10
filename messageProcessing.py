@@ -25,7 +25,7 @@ class MessageProcessor:
             '/stop_budgeting': self.stop_budgeting,
             '/set_monthly_budget': self.set_monthly_budget,
             '/show_this_month_expenses': self.show_this_month_expenses,
-            '/chart': self.chart,
+            '/expenses_graph': self.expenses_graph,
             '/show_commands': self.show_commands
         }
 
@@ -44,7 +44,7 @@ To specify an info page, type "/info <page>" (replacing <page> with the page you
 The info pages available are:"""
             pages = [f for f in listdir("info") if path.isfile(path.join("info", f))]
             for page in pages:
-                response += "\n - " + page[:-4]
+                response += "\n- " + page[:-4]
             return response
         else:
             info_page_maybe = utils.get_page(args[1], "info")
@@ -61,7 +61,7 @@ Type `/help [page]` (replacing [page] with the command you want help with, witho
 Additional help pages:"""
             pages = [f for f in listdir("help") if path.isfile(path.join("help", f))]
             for page in pages:
-                response += "\n - " + page[:-4]
+                response += "\n- " + page[:-4]
             return response
         else:
             match args[1]:
@@ -83,6 +83,10 @@ Additional help pages:"""
                     return "Usage: /stop_budgeting\n\nStops the budget tracker"
                 case "set_monthly_budget":
                     return "Usage: /set_monthly_budget <amount>\n\nSets the monthly budget - The amount of money available each month\n\n\t<amount> - The amount of money available (positive integer)"
+                case "show_this_month_expenses":
+                    return "Usage: /show_this_month_expenses\n\nDisplays a pie chart showing all the expenses for this month, broken up into categories, compared to the budget"
+                case "expenses_graph":
+                    return "Usage: /expenses_graph\n\nDisplays a line graph showing total expenses over time"
             help_page_maybe = utils.get_page(args[1], "help")
             if help_page_maybe is None:
                 return f"The info page \"{args[1]}\" does not exist"
@@ -106,9 +110,9 @@ Additional help pages:"""
             self.bc.add_expense(user_id, int(args[0]), BudgetController.ExpenseCategory[args[1]])
             ans = "expense added successfully\n"
             if self.bc.get_remaining_budget(user_id) < 0:
-                ans += f"You have exceeded your budget. You have exceeded you budget by {str(self.bc.get_remaining_budget(user_id))[1:]}.\n"
+                ans += f"You have exceeded your budget. You have exceeded you budget by £{str(self.bc.get_remaining_budget(user_id))[1:]}.\n"
             else:
-                ans += f"Remaining budget: {self.bc.get_remaining_budget(user_id)}\n"
+                ans += f"Remaining budget: £{self.bc.get_remaining_budget(user_id)}\n"
                 ans += f"{self.bc.get_remaining_budget(user_id) / self.bc.get_monthly_budget(user_id) * 100}% of your monthly budget\n"
             return ans
         except KeyError:
@@ -143,11 +147,11 @@ Additional help pages:"""
         if len(expenses) == 0:
             ans = "You have no expenses this month"
         else:
-            ans = "\n".join([f"Amount: {expense[1]}, Category: {BudgetController.ExpenseCategory(expense[2]).name}, Date: {expense[3]}" for expense in expenses])
-        ans += f"\nRemaining budget: {self.bc.db.select('budgeting', 'remaining_budget', f'WHERE user_id = {user_id}')[0][0]}"
+            ans = "\n".join([f"Amount: £{expense[1]}, Category: {BudgetController.ExpenseCategory(expense[2]).name}, Date: {expense[3]}" for expense in expenses])
+        ans += f"\nRemaining budget: £{self.bc.db.select('budgeting', 'remaining_budget', f'WHERE user_id = {user_id}')[0][0]}"
         return ans, file_path
 
-    def chart(self, user_id: int, message: str) -> tuple[str, str]:
+    def expenses_graph(self, user_id: int, message: str) -> tuple[str, str]:
         expenses = self.bc.get_this_month_expenses(user_id)
         file_path = f"charts/expenses_cumulative_chart_{user_id}.jpeg"
         graphics.create_cumulative_expenses_chart_and_as_jpg(expenses, file_path)
@@ -178,10 +182,11 @@ Additional help pages:"""
             self.bc.db.insert("users", "id, name, uses_budgeting", f"{user_id}, '{user_name}', 0")
             return "Welcome to the bot! You have been registered. If you want to use the budgeting feature, type /use_budgeting"
 
-        month = self.bc.db.select("budgeting", "month", f"WHERE user_id = {user_id}")[0][0]
-        print(month, utils.get_current_month())
-        if month != utils.get_current_month():
-            self.bc.db.update("budgeting", "remaining_budget = monthly_budget, month = strftime('%m', 'now')", f"user_id = {user_id}")
+        if self.bc.db.select("users", "uses_budgeting", f"WHERE id = {user_id}")[0][0]:
+            month = self.bc.db.select("budgeting", "month", f"WHERE user_id = {user_id}")[0][0]
+            print(month, utils.get_current_month())
+            if month != utils.get_current_month():
+                self.bc.db.update("budgeting", "remaining_budget = monthly_budget, month = strftime('%m', 'now')", f"user_id = {user_id}")
 
         if message_is_command(message):
             return self.process_command(user_id, message)
@@ -200,5 +205,7 @@ Additional help pages:"""
 #                 print(MessageProcessor.info_command(mp, u_input))
 #             case "/help":
 #                 print(MessageProcessor.help_command(mp, u_input))
+#             case "/show_commands":
+#                 print(MessageProcessor.show_commands(mp))
 #     except EOFError:
 #         break

@@ -6,6 +6,6 @@ Then, set a monthly budget (amount of money available) with `/set_monthly_budget
 
 You can then add expenses with `/add_expense <amount> <category>`, which will be added to the current month, and expenses of the same category will be grouped.
 
-For an overview of the expenses in the current month, type TODO
+For an overview of the expenses in the current month, type /show_this_month_expenses. For a graph of expenses over time, type /expenses_graph.
 
 Type `/help <command>` for help with the commands!
